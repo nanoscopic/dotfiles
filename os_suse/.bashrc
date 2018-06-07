@@ -45,6 +45,21 @@ function cssh() {
       ssh -t root@10.17.1.0 'docker exec -it \
         $(docker ps -f name=mariadb --format="{{.ID}}") \
         mysql -u velum -D velum_production --password=$(cat /var/lib/misc/infra-secrets/mariadb-velum-password)'; ;;
+    sm|salt-master) echo -en "\033];salt-master\a";
+      ssh -t root@10.17.1.0 'docker exec \
+        $(docker ps -f name=salt-master --format="{{.ID}}") \
+        /bin/bash'; ;;
+    v|velum) echo -en "\033];velum dashboard\a";
+      ssh -t root@10.17.1.0 'docker exec -it \
+        $(docker ps -f name=velum-dashboard --format="{{.ID}}") \
+        entrypoint.sh /bin/bash'; ;;
+    vapi|velum-api)
+      ssh root@10.17.1.0 '\
+        echo -n "Username: ";\
+        cat /var/lib/misc/infra-secrets/velum-internal-api-username;\
+        echo -n "Password: ";\
+        cat /var/lib/misc/infra-secrets/velum-internal-api-password;\
+        ' ;;
     *) echo 'a | m | w0 | w1'; ;;
   esac
 }
