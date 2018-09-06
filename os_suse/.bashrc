@@ -37,24 +37,24 @@ function topic() { export TTOP="$@ - "; rtitle; }
 # Function to easily ssh into the various nodes of a default Kubic devenv
 function cssh() {
   case $* in
-    a|admin*     ) echo -en "\033];caasp-admin\a"   ; ssh root@10.17.1.0; rtitle; ;;
-    m|m0|master* ) echo -en "\033];caasp-master-0\a"; ssh root@10.17.2.0; rtitle; ;;
-    w0|worker0*  ) echo -en "\033];caasp-worker-0\a"; ssh root@10.17.3.0; rtitle; ;;
-    w1|worker1*  ) echo -en "\033];caasp-worker-1\a"; ssh root@10.17.3.1; rtitle; ;;
+    a|admin*     ) echo -en "\033];caasp-admin\a"   ; ssh root@admin0; rtitle; ;;
+    m|m0|master* ) echo -en "\033];caasp-master-0\a"; ssh root@master0; rtitle; ;;
+    w0|worker0*  ) echo -en "\033];caasp-worker-0\a"; ssh root@worker0; rtitle; ;;
+    w1|worker1*  ) echo -en "\033];caasp-worker-1\a"; ssh root@worker1; rtitle; ;;
     my|mysql     ) echo -en "\033];mysql\a";
-      ssh -t root@10.17.1.0 'docker exec -it \
+      ssh -t root@admin0 'docker exec -it \
         $(docker ps -f name=mariadb --format="{{.ID}}") \
         mysql -u velum -D velum_production --password=$(cat /var/lib/misc/infra-secrets/mariadb-velum-password)'; ;;
     sm|salt-master) echo -en "\033];salt-master\a";
-      ssh -t root@10.17.1.0 'docker exec \
+      ssh -t root@admin0 'docker exec \
         $(docker ps -f name=salt-master --format="{{.ID}}") \
         /bin/bash'; ;;
     v|velum) echo -en "\033];velum dashboard\a";
-      ssh -t root@10.17.1.0 'docker exec -it \
+      ssh -t root@admin0 'docker exec -it \
         $(docker ps -f name=velum-dashboard --format="{{.ID}}") \
         entrypoint.sh /bin/bash'; ;;
     vapi|velum-api)
-      ssh root@10.17.1.0 '\
+      ssh root@admin0 '\
         echo -n "Username: ";\
         cat /var/lib/misc/infra-secrets/velum-internal-api-username;\
         echo -n "Password: ";\
